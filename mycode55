@@ -1,0 +1,177 @@
+import React, { useState, useRef, useEffect } from "react";
+import doctorImage from "./assets/mydoc.png"; // Make sure your image is here
+
+function App() {
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hi! How can I help you today?" },
+  ]);
+  const [input, setInput] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Toggle sidebar
+  const bottomRef = useRef(null);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text: input },
+      { sender: "bot", text: `You said: "${input}"` },
+    ]);
+    setInput("");
+  };
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  return (
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      {/* 🌟 Sidebar */}
+      <div
+        style={{
+          width: sidebarOpen ? "220px" : "0",
+          transition: "width 0.3s ease",
+          overflow: "hidden",
+          backgroundColor: "#333",
+          color: "#fff",
+          padding: sidebarOpen ? "1rem" : "0",
+        }}
+      >
+        <h2 style={{ marginBottom: "1rem", color: "#ffcccb" }}>Consultations</h2>
+        <button style={sidebarButtonStyle}>🧪 Medicinal Consultation</button>
+        <button style={sidebarButtonStyle}>💊 Normal Consultation</button>
+        <button style={sidebarButtonStyle}>👨‍⚕️ Expert Consultation</button>
+      </div>
+
+      {/* 🧠 Main Chat Interface */}
+      <div
+        style={{
+          flex: 1,
+          backgroundColor: "#ff4d4d",
+          display: "flex",
+          flexDirection: "column",
+          padding: "1rem",
+        }}
+      >
+        {/* ☰ Sidebar Toggle Button */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          style={{
+            backgroundColor: "#fff",
+            border: "1px solid #ccc",
+            padding: "0.5rem",
+            marginBottom: "1rem",
+            borderRadius: "6px",
+            width: "40px",
+            cursor: "pointer",
+          }}
+        >
+          ☰
+        </button>
+
+        {/* Doctor Image */}
+        <div style={{ textAlign: "center", marginBottom: "0.5rem" }}>
+          <img
+            src={doctorImage}
+            alt="Doctor"
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "3px solid white",
+            }}
+          />
+        </div>
+
+        <h1
+          style={{
+            color: "white",
+            textAlign: "center",
+            marginBottom: "1rem",
+          }}
+        >
+          Chat with Doctor
+        </h1>
+
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            backgroundColor: "#fff",
+            padding: "1rem",
+            borderRadius: "8px",
+            marginBottom: "1rem",
+          }}
+        >
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              style={{
+                textAlign: msg.sender === "user" ? "right" : "left",
+                marginBottom: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "12px",
+                  backgroundColor:
+                    msg.sender === "user" ? "#007bff" : "#e5e5ea",
+                  color: msg.sender === "user" ? "white" : "black",
+                }}
+              >
+                {msg.text}
+              </span>
+            </div>
+          ))}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Input Field */}
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            placeholder="Type your message..."
+            style={{
+              flex: 1,
+              padding: "0.5rem",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <button
+            onClick={handleSend}
+            style={{
+              padding: "0.5rem 1rem",
+              borderRadius: "6px",
+              backgroundColor: "#fff",
+              border: "1px solid #ccc",
+              cursor: "pointer",
+            }}
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 🎨 Sidebar Button Style
+const sidebarButtonStyle = {
+  backgroundColor: "#444",
+  color: "#fff",
+  border: "none",
+  padding: "10px",
+  marginBottom: "0.5rem",
+  borderRadius: "6px",
+  textAlign: "left",
+  cursor: "pointer",
+  width: "100%",
+};
+
+export default App;
